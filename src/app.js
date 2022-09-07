@@ -13,6 +13,7 @@ let upload = multer({ storage: multer.memoryStorage() });
 const WebSocket = require('ws');
 
 const getTree = require('./methods/getTree.js');
+const structureset = require('./api/structureset');
 
 const auth = require('./helpers/auth.js');
 const preAuth = require('./helpers/preAuth.js');
@@ -199,7 +200,7 @@ router.get('/pg/getTree',(req,res)=>{
 	  client.end();
 	});
 })
-
+router.post('/pg/setStructure', structureset.setStructure);
 
 /*
 router.get('/test',async (req,res)=>{
