@@ -20,6 +20,9 @@ const preAuth = require('./helpers/preAuth.js');
 const adminAuth = require('./helpers/adminAuth.js');
 const authWithPermissions = require('./helpers/authWithPermissions.js');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('./swagger/index');
+
 //const charactersFull_cache = require('../cache/charactersFull_cache.json')
 
 //const privateKey  = fs.readFileSync('src/sslcert/35442480_localhost.key', 'utf8');
@@ -29,10 +32,12 @@ const authWithPermissions = require('./helpers/authWithPermissions.js');
 const app = express();
 const router = express.Router();
 const joinrpgRouter = express.Router();
+const swaggerSpec = swaggerJSDoc.openapiSpecification;
 
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec));
 
 //const httpServer = http.createServer(app);
 //const httpsServer = https.createServer(credentials, app);
@@ -200,6 +205,43 @@ router.get('/pg/getTree',(req,res)=>{
 	  client.end();
 	});
 })
+  /**
+   * /setStructure:
+   *   post:
+   *     description: Create new structure
+   *     tags: [Structure, Create]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *		- name: structure name
+   *		  description: how you want to name your structure
+   *		  in: formData
+   *		  required: true
+   *		  type: string
+   *     responses:
+   *       200:
+   *         description: structure
+   */
+  /**
+   * @swagger
+   * /pg/setStructure:
+   *   post:
+   *     description: Create new structure
+   *     tags: [Structure]
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - name: name
+   *         description: how you want to name your structure
+   *         in: formData
+   *         required: true
+   *         type: string
+   *     responses:
+   *       200:
+   *         description: structure
+   *         schema:
+   *           type: object
+   */  
 router.post('/pg/setStructure', structureset.setStructure);
 
 /*

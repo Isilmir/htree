@@ -25,6 +25,11 @@
     "nodemailer": "^6.4.17",
     "nodemon": "^2.0.6",
     "pg": "^8.5.1",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0",
     "ws": "^8.8.1"
+  },
+  "devDependencies": {
+    "swagger-autogen": "^2.21.5"
   }
 }
