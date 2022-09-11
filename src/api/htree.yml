@@ -1,0 +1,133 @@
+openapi: 3.0.0
+
+info:
+ title: HTree API
+ version: 1.0.0
+ description: CRUD operations via tree-based structures
+
+servers:
+ - url: /pg
+
+tags:
+ - name: Structure 
+   description: working with structures itself
+ - name: Tree
+   description: operations with tree data
+
+paths:
+ /structure:
+  post:
+   summary: Create structure
+   tags:
+    - Structure
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/setStructureRequest'
+   responses:
+    200:
+     description: success
+  get:
+   summary: get structure list
+   tags:
+    - Structure
+   responses:
+    200:
+     description: success     
+ /tree/node:
+  post:
+   summary: Create tree node for existing structure
+   tags:
+    - Tree   
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/setTreeNode'
+   responses:
+    200:
+     description: success     
+  put:
+   summary: change tree node position
+   tags:
+    - Tree   
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/updateTreeNode'
+   responses:
+    200:
+     description: success         
+ /tree/node/{id}:
+  get:
+   summary: get node by id
+   tags:
+    - Tree   
+   parameters:
+    - name: id
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
+     description: success     
+  delete:
+   summary: delete node by id
+   tags:
+    - Tree   
+   parameters:
+    - name: id
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
+     description: success         
+ /tree/{structureid}:
+  get:
+   summary: get whole tree for srtucture
+   tags:
+    - Tree   
+   parameters:
+    - name: structureid
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
+     description: success     
+     
+
+components:
+ schemas:
+  setStructureRequest:
+   type: object
+   properties:
+    name:
+     type: string
+     example: Tree
+  setTreeNode:
+   type: object
+   properties:
+    structureid:
+     type: string
+    parentid:
+     type: string   
+  updateTreeNode:
+   type: object
+   properties:
+    id:
+     type: string
+    structureid:
+     type: string
+    parentid:
+     type: string        
+   

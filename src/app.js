@@ -13,7 +13,8 @@ let upload = multer({ storage: multer.memoryStorage() });
 const WebSocket = require('ws');
 
 const getTree = require('./methods/getTree.js');
-const structureset = require('./api/structureset');
+const structureset = require('./api/structure/structureset');
+const tree = require('./api/tree/tree');
 
 const auth = require('./helpers/auth.js');
 const preAuth = require('./helpers/preAuth.js');
@@ -22,6 +23,8 @@ const authWithPermissions = require('./helpers/authWithPermissions.js');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('./swagger/index');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./src/api/htree.yml');
 
 //const charactersFull_cache = require('../cache/charactersFull_cache.json')
 
@@ -37,7 +40,7 @@ const swaggerSpec = swaggerJSDoc.openapiSpecification;
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //const httpServer = http.createServer(app);
 //const httpsServer = https.createServer(credentials, app);
@@ -242,7 +245,13 @@ router.get('/pg/getTree',(req,res)=>{
    *         schema:
    *           type: object
    */  
-router.post('/pg/setStructure', structureset.setStructure);
+router.post('/pg/structure', structureset.setStructure);
+router.get('/pg/structure', structureset.getStructureList);
+router.post('/pg/tree/node', tree.setTreeNode);
+router.get('/pg/tree/node/:id', tree.getTreeNode);
+router.get('/pg/tree/:structureid', tree.getTree);
+router.put('/pg/tree/node', tree.updateTreeNode);
+router.delete('/pg/tree/node/:id', tree.deleteTreeNode);
 
 /*
 router.get('/test',async (req,res)=>{
