@@ -13,7 +13,7 @@ let upload = multer({ storage: multer.memoryStorage() });
 const WebSocket = require('ws');
 
 const getTree = require('./methods/getTree.js');
-const structureset = require('./api/structure/structureset');
+const structureset = require('./api/structure/structure');
 const tree = require('./api/tree/tree');
 
 const auth = require('./helpers/auth.js');

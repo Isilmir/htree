@@ -51,7 +51,7 @@ paths:
     200:
      description: success     
   put:
-   summary: change tree node position
+   summary: change tree node position and name
    tags:
     - Tree   
    requestBody:
@@ -121,12 +121,14 @@ components:
      type: string
     parentid:
      type: string   
+    name:
+     type: string      
   updateTreeNode:
    type: object
    properties:
     id:
      type: string
-    structureid:
+    name:
      type: string
     parentid:
      type: string        
