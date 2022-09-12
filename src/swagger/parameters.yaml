@@ -1,7 +1,0 @@
-parameters:
-  name:
-    name: structure name
-    description: how you want to name your structure
-    in: formData
-    required: true
-    type: string

@@ -12,7 +12,9 @@ tags:
  - name: Structure 
    description: working with structures itself
  - name: Tree
-   description: operations with tree data
+   description: operations with tree data 
+ - name: Properties
+   description: work with node's properties
 
 paths:
  /structure:
@@ -92,7 +94,7 @@ paths:
      description: success         
  /tree/{structureid}:
   get:
-   summary: get whole tree for srtucture
+   summary: get whole tree for structure
    tags:
     - Tree   
    parameters:
@@ -103,7 +105,77 @@ paths:
       required: true
    responses:
     200:
+     description: success 
+ /property:
+  post:
+   summary: create property for node
+   tags:
+    - Properties   
+   requestBody:
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/setProperty'
+   responses:
+    200:
+     description: success 
+  put:
+   summary: update property
+   tags:
+    - Properties
+   requestBody: 
+    required: true
+    content:
+     application/json:
+      schema:
+       $ref: '#/components/schemas/updateProperty'
+   responses:
+    200:
+     description: success 
+ /property/{treeid}:
+  get:
+   summary: get properties for node by node id
+   tags:
+    - Properties   
+   parameters:
+    - name: treeid
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
      description: success     
+ /property/{id}:
+  delete:
+   summary: delete property
+   tags:
+    - Properties   
+   parameters:
+    - name: id
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
+     description: success       
+ /property/types/{structureid}:
+  get:
+   summary: get all types for structure
+   tags:
+    - Properties   
+   parameters:
+    - name: structureid
+      in: path
+      schema:
+       type: string
+      required: true
+   responses:
+    200:
+     description: success         
+              
      
 
 components:
@@ -131,5 +203,25 @@ components:
     name:
      type: string
     parentid:
+     type: string      
+  setProperty:
+   type: object
+   properties:
+    type:
+     type: string
+    treeid:
+     type: string   
+    value:
+     type: string          
+  updateProperty:
+   type: object
+   properties:
+    id:
+     type: string   
+    type:
+     type: string
+    treeid:
+     type: string   
+    value:
      type: string        
    
