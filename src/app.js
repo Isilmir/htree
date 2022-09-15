@@ -30,7 +30,18 @@ router.put('/pg/property', properties.updateProperty);
 router.delete('/pg/property/:id', properties.deleteProperty);
 router.get('/pg/property/types/:structureid', properties.getTypes);
 
+router.get('/pg/property/types/:structureid', ()=>{
+    next();
+});
 
 app.use('/',router);
+app.use((err,req,res,next) => {
+    console.log('Error');
+    console.log('Error code: ', err.code);
+    console.log('Error stack: ', err.stack);
+    console.log('Error message: ', err.message);
+
+    res.status(500).send(err.message);
+});
 
 app.listen(process.env.SERVER_PORT,()=>console.log(`Listening on port ${process.env.SERVER_PORT}`))
