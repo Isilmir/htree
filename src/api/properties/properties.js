@@ -1,10 +1,10 @@
 const connect = require('../htreeconnection');
 
 const setProperty = async (req,res,next) => {
-    const {type, treeid, structureid, value, key} = req.body;
+    const {type, nodeid, structureid, value, key} = req.body;
     let query = `insert into tree.properties (type, treeid, structureid, value, key) values ($1,$2,$3,$4,$5) returning id,type, treeid, structureid, value, key`
     try {
-        let output = await connect.pool.query(query,[type, treeid, structureid, value,key]);
+        let output = await connect.pool.query(query,[type, nodeid, structureid, value,key]);
         res.status(200).send(output.rows[0]);
     } catch(err) {
         next(err);
@@ -12,10 +12,10 @@ const setProperty = async (req,res,next) => {
 }
 
 const getProperty = async (req,res,next) => {
-    const {treeid} = req.params;
-    let query = `select id, type, treeid, value from tree.properties where treeid = $1`
+    const {nodeid} = req.params;
+    let query = `select id, type, treeid, structureid, value, key from tree.properties where treeid = $1`
     try {
-        let output = await connect.pool.query(query,[treeid]);
+        let output = await connect.pool.query(query,[nodeid]);
         res.status(200).send(output.rows);
     } catch(err) {
         next(err);
@@ -23,10 +23,11 @@ const getProperty = async (req,res,next) => {
 }
 
 const updateProperty = async (req,res,next) => {
-    const {id, type, treeid, value} = req.body;
-    let query = `update tree.properties set type = $2,treeid=$3,value=$4  where id = $1 returning id,type, treeid, value`
+    const {id, type, nodeid, structureid, value, key} = req.body;
+    let query = `update tree.properties set type = $2,treeid=$3, structureid=$4,value=$5, key=$6  where id = $1 
+                returning id, type, treeid, structureid, value, key`
     try {
-        let output = await connect.pool.query(query,[id, type, treeid, value]);
+        let output = await connect.pool.query(query,[id, type, nodeid, structureid, value, key]);
         res.status(200).send(output.rows[0]);
     } catch(err) {
         next(err);
@@ -35,7 +36,7 @@ const updateProperty = async (req,res,next) => {
 
 const deleteProperty = async (req,res,next) => {
     const {id} = req.params;
-    let query = `delete from tree.properties where id = $1`
+    let query = `delete from tree.properties where id = $1 returning id, type, treeid, structureid, value, key`
     try {
         let output = await connect.pool.query(query,[id]);
         res.status(200).send(output.rows[0]);

@@ -30,7 +30,15 @@ paths:
        $ref: '#/components/schemas/setStructureRequest'
    responses:
     200:
-     description: success
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/createStructureResponse'  
+    500:
+     description: server error text  
+    400:
+     description: client error text              
   get:
    summary: get structure list
    tags:
@@ -38,6 +46,14 @@ paths:
    responses:
     200:
      description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/structureResponse'   
+    500:
+     description: server error text  
+    400:
+     description: client error text          
  /tree/node:
   post:
    summary: Create tree node for existing structure
@@ -55,7 +71,11 @@ paths:
      content:
       application/json:
        schema:
-        $ref: '#/components/schemas/setTreeNodeResponse'     
+        $ref: '#/components/schemas/setTreeNodeResponse'    
+    500:
+     description: server error text  
+    400:
+     description: client error text           
   put:
    summary: change tree node position and name
    tags:
@@ -68,7 +88,15 @@ paths:
        $ref: '#/components/schemas/updateTreeNode'
    responses:
     200:
-     description: success         
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/treeNodeResponse'   
+    500:
+     description: server error text  
+    400:
+     description: client error text              
  /tree/node/{id}:
   get:
    summary: get node by id
@@ -83,6 +111,14 @@ paths:
    responses:
     200:
      description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/treeNodeResponse' 
+    500:
+     description: server error text  
+    400:
+     description: client error text               
   delete:
    summary: delete node by id
    tags:
@@ -95,7 +131,15 @@ paths:
       required: true
    responses:
     200:
-     description: success         
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/treeNodeResponse'
+    500:
+     description: server error text  
+    400:
+     description: client error text                  
  /tree/{structureid}:
   get:
    summary: get whole tree for structure
@@ -109,7 +153,42 @@ paths:
       required: true
    responses:
     200:
-     description: success 
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/getTreeResponse'  
+    500:
+     description: server error text  
+    400:
+     description: client error text           
+ /tree/{structureid}/{nodeid}:
+  get:
+   summary: get tree from node
+   tags:
+    - Tree   
+   parameters:
+    - name: structureid
+      in: path
+      schema:
+       type: string
+      required: true
+    - name: nodeid
+      in: path
+      schema:
+       type: string
+      required: true      
+   responses:
+    200:
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/getTreeResponse'  
+    500:
+     description: server error text  
+    400:
+     description: client error text                   
  /property:
   post:
    summary: create property for node
@@ -123,7 +202,15 @@ paths:
        $ref: '#/components/schemas/setProperty'
    responses:
     200:
-     description: success 
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/propertyResponse'  
+    500:
+     description: server error text  
+    400:
+     description: client error text          
   put:
    summary: update property
    tags:
@@ -136,7 +223,15 @@ paths:
        $ref: '#/components/schemas/updateProperty'
    responses:
     200:
-     description: success 
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/propertyResponse'  
+    500:
+     description: server error text  
+    400:
+     description: client error text          
  /property/{treeid}:
   get:
    summary: get properties for node by node id
@@ -151,6 +246,14 @@ paths:
    responses:
     200:
      description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/propertyResponseArray'  
+    500:
+     description: server error text  
+    400:
+     description: client error text             
  /property/{id}:
   delete:
    summary: delete property
@@ -164,7 +267,15 @@ paths:
       required: true
    responses:
     200:
-     description: success       
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/propertyResponse' 
+    500:
+     description: server error text  
+    400:
+     description: client error text               
  /property/types/{structureid}:
   get:
    summary: get all types for structure
@@ -178,7 +289,15 @@ paths:
       required: true
    responses:
     200:
-     description: success         
+     description: success     
+     content:
+      application/json:
+       schema:
+        $ref: '#/components/schemas/propertyResponseArray'  
+    500:
+     description: server error text  
+    400:
+     description: client error text                
               
      
 
@@ -221,6 +340,8 @@ components:
      type: integer   
     name:
      type: string 
+    order:
+     type: integer      
     properties:
      type: array
      items:
@@ -233,7 +354,24 @@ components:
         key:
          type: string                   
         value:
-         type: string                        
+         type: string  
+  getTreeResponse:
+   type: array
+   items:
+    $ref: '#/components/schemas/setTreeNodeResponse'     
+  treeNodeResponse:
+   type: object
+   properties:
+    id:
+     type: integer
+    structureid:
+     type: integer
+    parentid:
+     type: integer   
+    name:
+     type: string 
+    order:
+     type: integer                               
   updateTreeNode:
    type: object
    properties:
@@ -246,21 +384,60 @@ components:
   setProperty:
    type: object
    properties:
+    nodeid:
+     type: integer 
+    structureid:
+     type: integer 
     type:
-     type: string
-    treeid:
-     type: string   
-    value:
      type: string          
+    key:
+     type: string       
+    value:
+     type: string 
+  propertyResponse:
+   type: object
+   properties:
+    id:
+     type: integer
+    nodeid:
+     type: integer 
+    structureid:
+     type: integer 
+    type:
+     type: string          
+    key:
+     type: string       
+    value:
+     type: string   
+  propertyResponseArray:
+   type: array
+   items:
+    $ref: '#/components/schemas/propertyResponse'                    
   updateProperty:
    type: object
    properties:
     id:
-     type: string   
+     type: integer
+    nodeid:
+     type: integer 
+    structureid:
+     type: integer 
     type:
-     type: string
-    treeid:
-     type: string   
+     type: string          
+    key:
+     type: string       
     value:
-     type: string        
+     type: string 
+  createStructureResponse:
+   type: object
+   properties:
+    id:
+     type: integer
+    name:
+     type: string          
+  structureResponse:   
+   type: array
+   items: 
+    $ref: '#/components/schemas/createStructureResponse'
+       
    

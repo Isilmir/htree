@@ -38,7 +38,7 @@ const setTreeNode = async (req,res,next) => {
 
 const getTreeNode = async (req,res,next) => {
     const {id} = req.params;
-    let query = `select id,structureid,parentid,name from tree.tree where id = $1`
+    let query = `select id,structureid,parentid,name,order from tree.tree where id = $1`
     try {
         let output = await connect.pool.query(query,[id]);
         res.status(200).send(output.rows[0]);
@@ -48,11 +48,63 @@ const getTreeNode = async (req,res,next) => {
 }
 
 const getTree = async (req,res,next) => {
+    let output = [];
     const {structureid} = req.params;
-    let query = `select id,structureid,parentid,name from tree.tree where structureid = $1`
+    let query = `select id,structureid,parentid,name,order from tree.tree where structureid = $1`
+    let queryProps = `select id, type, treeid, structureid, value, key from tree.properties where structureid = $1`
     try {
-        let output = await connect.pool.query(query,[structureid]);
-        res.status(200).send(output.rows);
+        let nodes = await connect.pool.query(query,[structureid]);
+        let properties = await connect.pool.query(queryProps,[structureid]);
+
+        for (let node of nodes.rows) {
+            const nodeprops = properties.rows.filter((element)=>{
+                return node.id === element.treeid;
+            })
+            output.push({
+                "id":node.id,
+                "structureid":node.structureid,
+                "parentid":node.parentid,
+                "name":node.name,
+                "order":node.order,
+                "properties":nodeprops
+            })
+        }
+        res.status(200).send(output);
+    } catch(err) {
+        next(err);
+    }
+}
+
+const getTreebyNodeId = async (req,res,next) => {
+    let output = [];
+    const {structureid, nodeid} = req.params;
+    console.log(req.params);
+    let query = `	WITH RECURSIVE cte_name AS(
+                select  t.id ,t.structureid ,t.parentid ,t."name" ,t."order" , 1 as lev from tree.tree t where t.id = $2 and t.structureid=$1 
+                UNION ALL
+                select t2.id ,t2.structureid ,t2.parentid ,t2."name" ,t2."order", c.lev+1
+                from cte_name c
+                join tree.tree t2 on t2.parentid = c.id 
+                ) SELECT id ,structureid ,parentid ,"name" ,"order" from cte_name`
+    let queryProps = `select id, type, treeid, structureid, value, key from tree.properties where structureid = $1`
+    try {
+        let nodes = await connect.pool.query(query,[structureid, nodeid]);
+        let properties = await connect.pool.query(queryProps,[structureid]);
+
+        for (let node of nodes.rows) {
+            const nodeprops = properties.rows.filter((element)=>{
+                return node.id === element.treeid;
+            })
+            output.push({
+                "id":node.id,
+                "structureid":node.structureid,
+                "parentid":node.parentid,
+                "name":node.name,
+                "order":node.order,
+                "properties":nodeprops
+            })
+        }
+        res.status(200).send(output);
     } catch(err) {
         next(err);
     }
@@ -85,5 +137,6 @@ module.exports = {
     getTreeNode,
     updateTreeNode,
     getTree,
-    deleteTreeNode
+    deleteTreeNode,
+    getTreebyNodeId
 }

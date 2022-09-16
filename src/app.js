@@ -22,6 +22,7 @@ router.get('/pg/structure', structureset.getStructureList);
 router.post('/pg/tree/node', tree.setTreeNode);
 router.get('/pg/tree/node/:id', tree.getTreeNode);
 router.get('/pg/tree/:structureid', tree.getTree);
+router.get('/pg/tree/:structureid/:nodeid', tree.getTreebyNodeId);
 router.put('/pg/tree/node', tree.updateTreeNode);
 router.delete('/pg/tree/node/:id', tree.deleteTreeNode);
 router.post('/pg/property', properties.setProperty);
